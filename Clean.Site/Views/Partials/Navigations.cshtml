@@ -1,0 +1,58 @@
+﻿@using Umbraco.Cms.Core.Models;
+@using Umbraco.Cms.Core.Models.Blocks;
+@inherits UmbracoViewPage
+@{
+    HomePage? homePage = Model.AncestorOrSelf<HomePage>();
+    IEnumerable<IPublishedContent> childrensHomePage = homePage?.Children?.Where(x => x.IsVisible()) ?? Enumerable.Empty<IPublishedContent>();
+    //IEnumerable<Link>? children = homePage?.NavigationItem;
+    IEnumerable<BlockListItem>? children = homePage?.NavigationItem;
+}
+ <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        @if(homePage is not null ){
+            <a class="navbar-brand" href="@homePage.Url()">@homePage.Name</a>
+        }
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto py-4 py-lg-0">
+               @* @if(homePage is not null ){
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="@homePage.Url()">@homePage.Name</a></li>
+                }
+                @if (childrensHomePage is not null && childrensHomePage.Any())
+                {
+                    @foreach (IPublishedContent pageContent in childrensHomePage)
+                    {
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="@pageContent.Url()">@pageContent.Name</a></li>
+                    }
+                }*@
+                @if (children is not null && children.Any())
+                {
+                    @foreach (BlockListItem<NavigationItem> item in children)
+                    {
+                        @if (item.Content.ChildLinks is not null && item.Content.ChildLinks.Any())
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link px-lg-3 py-3 py-lg-4 dropdown-toggle" style="cursor: crosshair;" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @item.Content.Title
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @foreach (Link link in item.Content.ChildLinks)
+                                    {
+                                        <li><a class="dropdown-item" href="@link.Url" target="@link.Target">@link.Name</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="@item.Content.Link?.Url" target="@item.Content.Link?.Target">@item.Content.Title</a></li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
