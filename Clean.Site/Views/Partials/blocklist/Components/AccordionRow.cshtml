@@ -1,0 +1,40 @@
+﻿@inherits UmbracoViewPage<BlockListItem<AccordionRow, AccordionRowSettings>>
+@{
+    if (Model.Content.AccordionItems == null || !Model.Content.AccordionItems.Any()) return;
+    if (Model.Settings?.Hide ?? false) return;
+    int counter = 0;
+    bool show = false;
+    Guid guid()=> Guid.NewGuid();
+    string key;
+}
+<div class="row mt-4 gx-4 gx-lg-5 justify-content-center">
+
+<header class="text-center">
+    <h2>@Model.Content.Title</h2>
+    <p>@Model.Content.Description</p>
+</header>
+
+    <div class="accordion" id="accordion-@Model.Content.Key">
+    @{
+            foreach (BlockListItem<AccordionItem, AccordionItemSettings> item in Model.Content.AccordionItems)
+        {
+            @if (item.Settings.Hide) continue;
+            key = $"{counter}-{guid()}";
+            show = counter == 0;
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="accordion-@key">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@key" aria-expanded="@show" aria-controls="collapse-@key">
+                        @item.Content.Title
+                    </button>
+                </h2>
+                    <div id="collapse-@key" class="accordion-collapse collapse @(show ? "show" : "") " aria-labelledby="accordion-@key" data-bs-parent="#accordion-@Model.Content.Key">
+                    <div class="accordion-body">
+                        @item.Content.Content
+                    </div>
+                </div>
+            </div>
+            counter++;
+        }
+    }
+    </div>
+</div>

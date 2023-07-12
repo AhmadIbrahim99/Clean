@@ -1,0 +1,40 @@
+﻿@inherits UmbracoViewPage<BlockListItem<FeaturedItemsRow, FeaturedItemsRowSettings>>
+@{
+    FeaturedItemsRow row = Model.Content;
+
+    if (row.FeaturedItems == null || !row.FeaturedItems.Any()) return;
+    FeaturedItemsRowSettings settings = Model.Settings;
+    if (settings?.Hide ?? false) return;
+}
+<div class="row gx-4 gx-lg-5 justify-content-center">
+    <header class="text-center">
+        <h2>@row.Title</h2>
+        <p>@row.Description</p>
+    </header>
+    @foreach (BlockListItem<ImageLinkItem, ImageLinkItemSettings> item in row.FeaturedItems)
+    {
+        @if (item.Settings.Hide) continue;
+        <div class="col">
+            <div class="card h-100">
+                @if (item.Content.Image != null)
+                {
+                    <img src="@item.Content.Image.GetCropUrl(490,383)" class="card-img-top" alt="...">
+                }
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(item.Content.Title))
+                    {
+                        <h5 class="card-title">@item.Content.Title</h5>
+                    }
+                    @if (!string.IsNullOrEmpty(item.Content.Description))
+                    {
+                        <p class="card-text">@item.Content.Description</p>
+                    }
+                    @if (item.Content.Link != null)
+                    {
+                        <a class="btn btn-primary" href="@item.Content.Link.Url">@item.Content.Link.Name</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
